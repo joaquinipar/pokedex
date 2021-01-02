@@ -1,0 +1,110 @@
+<!doctype html>
+
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+
+  <title>Pokedex</title>
+  <meta name="description" content="Pokedex">
+  
+  
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="node_modules\flag-icon-css\css\flag-icon.min.css">
+  <link rel="stylesheet" type="text/css" href="node_modules\bootstrap\dist\css\bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="node_modules\bootstrap-select\dist\css\bootstrap-select.min.css">
+</head>
+
+<header class="navbar">
+
+
+  <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav pt-2 py-md-0">
+
+    <li class="nav-item col-6 col-md-auto">
+      <img src="pokeball.png" class="img-thumbnail" id="logo" >
+    </li>
+
+    <li class="nav-item col-6 col-md-auto">
+      <a class="nav-link p-2" href="#">Pokedex</a>
+    </li>
+
+    <li class="nav-item col-6 col-md-auto">
+      <select class="selectpicker" data-width="fit">
+        <option data-content='<span class="flag-icon flag-icon-gb language-select"></span> English'>English</option>
+        <option data-content='<span class="flag-icon flag-icon-ar language-select"></span> Español'>Español</option>
+      </select>
+    </li>
+
+
+  </ul>
+
+</header>
+
+<body>
+  <div class="row">
+    <div class="col-md-auto">
+      <div class="container-sm" id="pokemon-search">
+            <div class="bs-example">
+              <h2 id="welcome">Type your favorite Pokemon!</h2>
+                  <input id="selected-pokemon" type="text" class="typeahead tt-query" autocomplete="off" spellcheck="false">
+            </div>
+      </div>
+    </div>
+
+    <div class="col-md-auto" id="pokemon-search-button">
+      <div class="d-grid gap-2 d-md-block" id="pokemon-search-button">
+        <button id="search-pokemon" class="btn btn-dark" type="button">Search</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-sm-2"> 
+      <img id="pokemon-img" src='mystery.png'>
+    </div>
+    
+    <div class="col-sm-3">
+      <!-- List group -->
+      <div class="list-group" id="myList" role="tablist">
+        <a class="list-group-item list-group-item-action active" data-toggle="list" href="#general" id="general-info-button" role="tab">General Information</a>
+        <a class="list-group-item list-group-item-action" data-toggle="list" href="#abilities" id="abilities-button" role="tab">Abilities</a>
+        <a class="list-group-item list-group-item-action" data-toggle="list" href="#items" id="items-button" role="tab">Items</a>
+        <a class="list-group-item list-group-item-action" data-toggle="list" href="#settings" id="settings-button" role="tab">Settings</a>
+      </div>
+    </div>
+
+    <div class="col-sm-2">
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div class="tab-pane active" id="general" role="tabpanel">
+          <h3 id="pokemon-name-h3">Name</h3>
+          <h5 id="pokemon-name"></h4>
+          <h3 id="pokemon-base-xp-h3">Base XP</h3>
+          <h5 id="pokemon-base-xp"></h4>
+          <h3 id="pokemon-weight-h3">Weight</h3>
+          <h5 id="pokemon-weight"></h4>
+        </div>
+        <div class="tab-pane" id="abilities" role="tabpanel">
+          <h3 id="abilities-h3">Abilities</h3>
+          <ul id="pokemon-abilities-list" class="list-group"></ul>
+        </div>
+
+        <div class="tab-pane" id="items" role="tabpanel">
+          <h3 id="items-h3">Items</h3>
+
+        </div>
+        <div class="tab-pane" id="settings" role="tabpanel">D</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="node_modules\jquery\dist\jquery.js"></script>
+  <script src="node_modules\corejs-typeahead\dist\bloodhound.min.js"></script>
+  <script src="node_modules\corejs-typeahead\dist\typeahead.bundle.min.js"></script>
+  <script src="node_modules\popper.js\dist\umd\popper.min.js"></script>
+  <script src="node_modules\bootstrap\dist\js\bootstrap.js"></script>
+  <script src="node_modules\bootstrap-select\dist\js\bootstrap-select.min.js"></script>
+  <script src="pokedex.js"></script>
+</body>
+</html>
