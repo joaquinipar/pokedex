@@ -96,6 +96,16 @@ function loadSearchEngine() {
     });
 }
 
+function clearPokemonInfo() {
+  updatePokemonInfo($pokemonName, '');
+  updatePokemonInfo($pokemonBaseXP, '');
+  updatePokemonInfo($pokemonWeight, '');
+}
+
+function clearPokemonImg() {
+  updatePokemonImg($pokemonImg, 'mystery.png');
+}
+
 setTimeout(() => {
   $('.bootstrap-select').on('click', (e) => {
     e.preventDefault();
@@ -111,12 +121,13 @@ $('#myList a').on('click', function (e) {
 
 $('#search-pokemon').on('click', (e) => {
   e.preventDefault();
+  clearAbilities();
+  clearPokemonInfo();
+  clearPokemonImg();
   console.log(` ${$('#selected-pokemon')[0].value} `);
   const selectedPokemon = $('#selected-pokemon')[0].value;
 
   specificPokemonData(selectedPokemon).then((pokemonJSON) => {
-    clearAbilities();
-
     updatePokemonInfo($pokemonName, pokemonJSON.name);
     updatePokemonInfo($pokemonBaseXP, pokemonJSON.base_experience);
     updatePokemonInfo($pokemonWeight, pokemonJSON.weight);
