@@ -8,6 +8,8 @@ const $pokemonAbilities = document.querySelector('#pokemon-abilities-list');
 const $pokemonName = document.querySelector('#pokemon-name');
 const $pokemonBaseXP = document.querySelector('#pokemon-base-xp');
 const $pokemonWeight = document.querySelector('#pokemon-weight');
+const $errorAlert = document.querySelector('.alert-danger');
+const $pokemonSearch = document.querySelector('#selected-pokemon');
 let languageNumber = 7;
 
 function clearAbilities() { $pokemonAbilities.innerHTML = ''; }
@@ -32,9 +34,18 @@ function changeLanguage(newLanguage) {
     $('#pokemon-name-h3').text('Nombre');
     $('#pokemon-base-xp-h3').text('Experiencia Base');
     $('#pokemon-weight-h3').text('Peso');
-
+    $($errorAlert).text('Asegurese de ingresar un pokemon válido.');
     languageNumber = 5;
   } else if (newLanguage === 'English') {
+    $('#welcome').text('Type your favorite Pokemon!');
+    $('#general-info-button').text('General Information');
+    $('#abilities-h3').text('Abilities');
+    $('#abilities-button').text('Abilities');
+    // $("#items-h3") remains unchanged
+    $('#pokemon-name-h3').text('Name');
+    $('#pokemon-base-xp-h3').text('Base XP');
+    $('#pokemon-weight-h3').text('Weight');
+    $($errorAlert).text('Make sure to enter a valid pokemon.');
     languageNumber = 7;
   }
   $('#search-pokemon').click(); // reload search in the new language
@@ -106,6 +117,15 @@ function clearPokemonImg() {
   updatePokemonImg($pokemonImg, 'mystery.png');
 }
 
+function toggleFailure() {
+  $errorAlert.style.visibility = 'visible';
+  $pokemonSearch.style.borderColor = 'red';
+}
+function clearAlert() {
+  $errorAlert.style.visibility = 'hidden';
+  $pokemonSearch.style.borderColor = '';
+}
+
 setTimeout(() => {
   $('.bootstrap-select').on('click', (e) => {
     e.preventDefault();
@@ -124,6 +144,7 @@ $('#search-pokemon').on('click', (e) => {
   clearAbilities();
   clearPokemonInfo();
   clearPokemonImg();
+  clearAlert();
   console.log(` ${$('#selected-pokemon')[0].value} `);
   const selectedPokemon = $('#selected-pokemon')[0].value;
 
@@ -133,7 +154,10 @@ $('#search-pokemon').on('click', (e) => {
     updatePokemonInfo($pokemonWeight, pokemonJSON.weight);
     updatePokemonImg($pokemonImg, pokemonJSON.sprites.front_default);
     updateAbilities($pokemonAbilities, pokemonJSON.abilities);
-  });
+  })
+    .catch(() => {
+      toggleFailure();
+    });
 });
 
 $(() => {
