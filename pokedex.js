@@ -119,7 +119,7 @@ function clearPokemonImg() {
 
 function toggleFailure() {
   $errorAlert.style.visibility = 'visible';
-  $pokemonSearch.style.borderColor = 'red';
+  $pokemonSearch.style.borderColor = 'rgb(255, 0, 0)'; // red
 }
 function clearAlert() {
   $errorAlert.style.visibility = 'hidden';
