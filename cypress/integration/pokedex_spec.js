@@ -41,4 +41,10 @@ describe('Pokedex', () => {
       cy.get('#pokemon-name').contains(pokemonSelectedName);
     });
   });
+  it('select valid pokemon and picture changes', () => {
+    const originalPicture = Cypress.$('#pokemon-img').attr('src');
+    cy.get('#selected-pokemon').click({ force: true }).type(POKEMON_NAME);
+    cy.get('#search-pokemon').click({ force: true });
+    cy.get('#pokemon-img').should('not.have.attr', 'src', originalPicture);
+  });
 });

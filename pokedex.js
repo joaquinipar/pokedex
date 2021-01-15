@@ -1,41 +1,16 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-console */
 /* eslint-disable no-undef */
+import * as ui from './ui.js';
+import { fetchInfo, specificPokemonData } from './services.js';
+
 const pokemonsURL = 'https://pokeapi.co/api/v2/pokemon/?limit=9999';
-const specificPokemon = 'https://pokeapi.co/api/v2/pokemon/';
-const $pokemonImg = document.querySelector('#pokemon-img');
-const $pokemonAbilities = document.querySelector('#pokemon-abilities-list');
-const $pokemonName = document.querySelector('#pokemon-name');
-const $pokemonBaseXP = document.querySelector('#pokemon-base-xp');
-const $pokemonWeight = document.querySelector('#pokemon-weight');
-const $errorAlert = document.querySelector('.alert-danger');
-const $pokemonSearch = document.querySelector('#selected-pokemon');
-const $pokemonItems = document.querySelector('#pokemon-item-list');
-const $pokemonHP = document.querySelector('#pokemon-hp');
-const $pokemonAttack = document.querySelector('#pokemon-attack');
-const $pokemonDefense = document.querySelector('#pokemon-defense');
-const $pokemonSpecialAttack = document.querySelector('#pokemon-special-attack');
-const $pokemonSpeed = document.querySelector('#pokemon-speed');
-const pokemonStatsElements = [$pokemonHP, $pokemonAttack, $pokemonDefense,
-  $pokemonSpecialAttack, $pokemonSpeed];
+const SpanishNumber = 5;
+const EnglishNumber = 7;
 let languageNumber = 7;
 
-function clearAbilities() { $pokemonAbilities.innerHTML = ''; }
-
-async function fetchInfo(URL) {
-  const response = await fetch(URL);
-  const responseJSON = await response.json();
-  return responseJSON;
-}
-
-async function specificPokemonData(pokemonName) {
-  const response = await fetch(specificPokemon + pokemonName);
-  const responseJSON = await response.json();
-  return responseJSON;
-}
-
-function selectedLanguage() {
-  return $('.language-select')[0].parentElement.innerText.trim();
+function setLanguageNumber(number) {
+  languageNumber = number;
 }
 
 function changeLanguage(newLanguage) {
@@ -48,13 +23,13 @@ function changeLanguage(newLanguage) {
     $('#pokemon-name-h3').text('Nombre');
     $('#pokemon-base-xp-h3').text('Experiencia Base');
     $('#pokemon-weight-h3').text('Peso');
-    $($errorAlert).text('Asegurese de ingresar un pokemon válido.');
+    $(ui.$errorAlert).text('Asegurese de ingresar un pokemon válido.');
     // $("#pokemon-hp-h3") remains unchanged
     $('#pokemon-attack-h3').text('Ataque');
     $('#pokemon-defense-h3').text('Defensa');
     $('#pokemon-special-attack-h3').text('Ataque Especial');
     $('#pokemon-speed-h3').text('Velocidad');
-    languageNumber = 5;
+    setLanguageNumber(SpanishNumber);
   } else if (newLanguage === 'English') {
     $('#welcome').text('Type your favorite Pokemon!');
     $('#general-info-button').text('General Information');
@@ -64,23 +39,22 @@ function changeLanguage(newLanguage) {
     $('#pokemon-name-h3').text('Name');
     $('#pokemon-base-xp-h3').text('Base XP');
     $('#pokemon-weight-h3').text('Weight');
-    $($errorAlert).text('Make sure to enter a valid pokemon.');
+    $(ui.$errorAlert).text('Make sure to enter a valid pokemon.');
     // $("#pokemon-hp-h3") remains unchanged
     $('#pokemon-attack-h3').text('Attack');
     $('#pokemon-defense-h3').text('Defense');
     $('#pokemon-special-attack-h3').text('Special Attack');
     $('#pokemon-speed-h3').text('Speed');
-    languageNumber = 7;
+    setLanguageNumber(EnglishNumber);
   }
-  $('#search-pokemon').click(); // reload search in the new language
+  ui.clearAllInfo();
+  // $('#search-pokemon').click(); // reload search in the new language
 }
 
-function updatePokemonInfo(element, newText) {
-  element.textContent = newText;
+function selectedLanguage() {
+  return $('.language-select')[0].parentElement.innerText.trim();
 }
-function updatePokemonImg(element, newSrc) {
-  element.src = newSrc;
-}
+
 function updatePokemonItems(element, itemList) {
   itemList.forEach((itemObject) => {
     console.log(itemObject.item.url);
@@ -90,43 +64,29 @@ function updatePokemonItems(element, itemList) {
       console.log(`nombre del item: ${itemName}`);
       console.log(`imagen del item ${itemImg}`);
 
-      const newRow = $('<div/>').addClass('row');
-      const newDiv1 = $('<div/>').addClass('col-sm-6');
-      const newImg = $('<img/>').attr('src', itemImg);
-      const newDiv2 = $('<div/>').addClass('col-sm-6');
-      const newItemText = $('</p>').text(itemName);
-
-      newDiv1.append(newImg);
-      newDiv2.append(newItemText);
-      newRow.append(newDiv1);
-      newRow.append(newDiv2);
-      $(element).append(newRow);
+      $(element).append(ui.createItemRow(itemName, itemImg));
     })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   });
 }
 
-function updatePokemonStats(statsList) {
-  pokemonStatsElements.forEach((element, index) => {
-    element.textContent = statsList[index].base_stat;
-  });
-}
-
 function updateAbilities(element, abilitiesList) {
+  const itemClass = 'list-group-item';
   abilitiesList.forEach((abilityObject) => {
-    fetch(abilityObject.ability.url)
-      .then((response) => response.json())
+    fetchInfo(abilityObject.ability.url)
       .then((responseJSON) => {
-        $(element).append($('<li/>').text(responseJSON.names[languageNumber].name).attr('class', 'list-group-item'));
+        const abilityName = responseJSON.names[languageNumber].name;
+        const newLi = $('<li/>');
+        newLi.text(abilityName).attr('class', itemClass);
+        $(element).append(newLi);
       });
   });
 }
 
 function loadSearchEngine() {
-  fetch(pokemonsURL)
-    .then((response) => response.json())
+  fetchInfo(pokemonsURL)
     .then((responseJSON) => {
       const pokemonNames = [];
 
@@ -158,70 +118,41 @@ function loadSearchEngine() {
     });
 }
 
-function clearStatsInfo() {
-  updatePokemonInfo($pokemonHP, '');
-  updatePokemonInfo($pokemonAttack, '');
-  updatePokemonInfo($pokemonDefense, '');
-  updatePokemonInfo($pokemonSpecialAttack, '');
-  updatePokemonInfo($pokemonSpeed, '');
-}
-
-function clearPokemonInfo() {
-  updatePokemonInfo($pokemonName, '');
-  updatePokemonInfo($pokemonBaseXP, '');
-  updatePokemonInfo($pokemonWeight, '');
-}
-
-function clearPokemonImg() {
-  updatePokemonImg($pokemonImg, 'mystery.png');
-}
-
-function toggleFailure() {
-  $errorAlert.style.visibility = 'visible';
-  $pokemonSearch.style.borderColor = 'rgb(255, 0, 0)'; // red
-}
-function clearAlert() {
-  $errorAlert.style.visibility = 'hidden';
-  $pokemonSearch.style.borderColor = '';
-}
-function clearItem() {
-  $pokemonItems.innerHTML = '';
-}
-
 setTimeout(() => {
   $('.bootstrap-select').on('click', (e) => {
-    e.preventDefault();
     console.log('click');
     changeLanguage(selectedLanguage());
+    e.preventDefault();
   });
 }, 100);
 
 $('#myList a').on('click', function (e) {
-  e.preventDefault();
   $(this).tab('show');
+  e.preventDefault();
 });
 
 $('#search-pokemon').on('click', (e) => {
   e.preventDefault();
-  clearAbilities();
-  clearStatsInfo();
-  clearPokemonInfo();
-  clearPokemonImg();
-  clearAlert();
-  clearItem();
+  ui.clearAllInfo();
   const selectedPokemon = $('#selected-pokemon')[0].value;
-
   specificPokemonData(selectedPokemon).then((pokemonJSON) => {
-    updatePokemonInfo($pokemonName, pokemonJSON.name);
-    updatePokemonInfo($pokemonBaseXP, pokemonJSON.base_experience);
-    updatePokemonInfo($pokemonWeight, pokemonJSON.weight);
-    updatePokemonImg($pokemonImg, pokemonJSON.sprites.front_default);
-    updateAbilities($pokemonAbilities, pokemonJSON.abilities);
-    updatePokemonItems($pokemonItems, pokemonJSON.held_items);
-    updatePokemonStats(pokemonJSON.stats);
+    ui.updatePokemonInfo(ui.$pokemonName, pokemonJSON.name);
+    console.log(pokemonJSON.name);
+    ui.updatePokemonInfo(ui.$pokemonBaseXP, pokemonJSON.base_experience);
+    console.log(pokemonJSON.base_experience);
+    ui.updatePokemonInfo(ui.$pokemonWeight, pokemonJSON.weight);
+    console.log(pokemonJSON.weight);
+    ui.updatePokemonImg(ui.$pokemonImg, pokemonJSON.sprites.front_default);
+    console.log(pokemonJSON.sprites.front_default);
+    updateAbilities(ui.$pokemonAbilities, pokemonJSON.abilities);
+    console.log(pokemonJSON.abilities);
+    updatePokemonItems(ui.$pokemonItems, pokemonJSON.held_items);
+    console.log(pokemonJSON.held_items);
+    ui.updatePokemonStats(pokemonJSON.stats);
   })
-    .catch(() => {
-      toggleFailure();
+    .catch((error) => {
+      console.error(error);
+      ui.toggleFailure();
     });
 });
 
