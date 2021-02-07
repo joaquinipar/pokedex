@@ -4,6 +4,8 @@
   "description": "Just a pokedex.",
   "main": "pokedex.js",
   "scripts": {
+    "cypress-run": "cypress run",
+    "cypress-open": "cypress open",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -20,6 +22,7 @@
     "popper.js": "^1.16.1"
   },
   "devDependencies": {
+    "cypress": "^6.2.0",
     "eslint": "^7.17.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1"
