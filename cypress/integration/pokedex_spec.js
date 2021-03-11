@@ -1,13 +1,32 @@
 /* eslint-disable no-undef */
 const URL = 'localhost:8080';
 const POKEMON_NAME = 'pikachu';
+const pokemonAPI = 'https://pokeapi.co/api/v2/pokemon/';
 
 describe('Pokedex', () => {
+  let fetchPolyfill;
+
   beforeEach(() => {
-    cy.visit(URL);
-    cy.wait(100);
+    const polyfillUrl = 'https://unpkg.com/unfetch/dist/unfetch.umd.js';
+
+    cy.request(polyfillUrl)
+      .then((response) => {
+        fetchPolyfill = response.body;
+      });
+    cy.visit('localhost:8080', {
+      onBeforeLoad(contentWindow) {
+        // eslint-disable-next-line no-param-reassign
+        delete contentWindow.fetch;
+        contentWindow.eval(fetchPolyfill);
+        // eslint-disable-next-line no-param-reassign
+        contentWindow.fetch = contentWindow.unfetch;
+      } });
+      cy.wait(100);
   });
   it('search a valid pokemon and get a response displayed', () => {
+    cy.server();
+    cy.route(pokemonAPI + POKEMON_NAME, `fixture:${POKEMON_NAME}`).as('getPokemon');
+
     cy.get('#selected-pokemon').click({ force: true }).type(POKEMON_NAME);
     cy.get('#search-pokemon').click({ force: true });
     cy.get('#pokemon-name').contains(POKEMON_NAME);
@@ -47,4 +66,14 @@ describe('Pokedex', () => {
     cy.get('#search-pokemon').click({ force: true });
     cy.get('#pokemon-img').should('not.have.attr', 'src', originalPicture);
   });
+  it('search pokemon and then search for another', () =>{
+    cy.server();
+    cy.route('https://pokeapi.co/api/v2/pokemon/metapod', 'fixture:metapod').as('getMetapod');
+
+    cy.get('#selected-pokemon').click({ force: true }).type('metapod');
+    cy.get('#search-pokemon').click({ force: true });
+    cy.get('#pokemon-name').contains('metapod');
+
+  });
+
 });
