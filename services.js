@@ -7,12 +7,12 @@ export async function fetchInfo(URL) {
 }
 
 export async function specificPokemonData(pokemonName) {
-  if( JSON.parse( localStorage.getItem(pokemonName)) != null) {
+  try {
     const response = await fetch( JSON.parse( localStorage.getItem(pokemonName)).url );
     const responseJSON = await response.json();
     return responseJSON;
   }
-  else{
+  catch(e){
   const response = await fetch(specificPokemon + pokemonName);
   const responseJSON = await response.json();
   return responseJSON;
