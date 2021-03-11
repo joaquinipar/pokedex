@@ -92,6 +92,7 @@ function loadSearchEngine() {
 
       responseJSON.results.forEach((pokemon) => {
         pokemonNames.push(pokemon.name);
+        localStorage.setItem(pokemon.name , JSON.stringify(pokemon));
       });
       return pokemonNames;
     })
